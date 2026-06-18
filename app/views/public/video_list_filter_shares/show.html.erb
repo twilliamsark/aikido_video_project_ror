@@ -1,0 +1,54 @@
+<section class="space-y-6">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <p class="text-sm font-medium text-neutral-500">Shared List</p>
+      <h1 class="mt-2 text-3xl font-semibold text-neutral-950"><%= @video_list_filter.name %></h1>
+      <% if @video_list_filter.query.present? %>
+        <p class="mt-2 text-sm text-neutral-600">Showing videos matching <span class="font-medium"><%= @video_list_filter.query %></span></p>
+      <% end %>
+    </div>
+
+    <%= form_with url: public_video_list_path(params[:token]), method: :get, class: "grid gap-3 sm:grid-cols-[12rem_auto] sm:items-end" do |form| %>
+      <div>
+        <%= form.label :sort, "Sort", class: "block text-sm font-medium text-neutral-700" %>
+        <%= form.select :sort, options_for_select(@sort_options, @sort), {}, class: "mt-2 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm shadow-sm focus:outline-solid focus:outline-blue-600" %>
+      </div>
+
+      <%= form.submit "Apply", class: "cursor-pointer rounded-md bg-neutral-900 px-3.5 py-2.5 text-sm font-medium text-white hover:bg-neutral-700" %>
+    <% end %>
+  </div>
+
+  <% if @video_list_filter.description.body.present? %>
+    <div class="prose max-w-none border-b border-neutral-200 pb-6">
+      <%= @video_list_filter.description %>
+    </div>
+  <% end %>
+
+  <% if @videos.any? %>
+    <div class="grid gap-4 md:grid-cols-2">
+      <% @videos.each do |video| %>
+        <article class="rounded-md border border-neutral-200 bg-white p-5 shadow-sm">
+          <div class="flex h-full flex-col gap-4">
+            <div class="space-y-2">
+              <h2 class="text-xl font-semibold text-neutral-950"><%= link_to video.title, video_path(video), class: "hover:underline" %></h2>
+              <p class="text-sm text-neutral-600"><%= video.keywords.map(&:name).sort_by(&:downcase).join(", ").presence || "No keywords" %></p>
+            </div>
+
+            <% if video.description_plain_text.present? %>
+              <p class="line-clamp-3 text-sm leading-6 text-neutral-700"><%= truncate(video.description_plain_text.squish, length: 220) %></p>
+            <% end %>
+
+            <div class="mt-auto pt-2">
+              <%= link_to "Watch", video_path(video), class: "inline-flex items-center justify-center rounded-md border border-neutral-300 px-3.5 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50" %>
+            </div>
+          </div>
+        </article>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="rounded-md border border-dashed border-neutral-300 bg-neutral-50 p-8 text-center">
+      <h2 class="text-lg font-semibold text-neutral-950">No videos found</h2>
+      <p class="mt-2 text-sm text-neutral-600">This shared list does not currently match any videos.</p>
+    </div>
+  <% end %>
+</section>

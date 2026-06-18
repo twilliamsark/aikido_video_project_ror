@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   scope module: :public do
     resources :videos, only: %i[ index show ]
     get "watch/:token", to: "video_shares#show", as: :public_video_share
+    get "lists/:token", to: "video_list_filter_shares#show", as: :public_video_list
   end
 
   namespace :teachers, path: "teacher", as: "teacher" do
@@ -16,6 +17,10 @@ Rails.application.routes.draw do
       end
 
       resource :share, only: %i[ create destroy ], controller: "video_shares"
+    end
+
+    resources :video_list_filters do
+      resource :share, only: %i[ create destroy ], controller: "video_list_filter_shares"
     end
   end
 

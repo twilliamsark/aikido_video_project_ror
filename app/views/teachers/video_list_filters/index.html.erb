@@ -1,0 +1,58 @@
+<section class="space-y-6">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <p class="text-sm font-medium text-neutral-500">Teacher Area</p>
+      <h1 class="mt-2 text-3xl font-semibold text-neutral-950">List Filters</h1>
+    </div>
+
+    <%= link_to "New List Filter", new_teacher_video_list_filter_path, class: "inline-flex items-center justify-center rounded-md bg-neutral-900 px-3.5 py-2.5 text-sm font-medium text-white hover:bg-neutral-700" %>
+  </div>
+
+  <% if @video_list_filters.any? %>
+    <div class="overflow-hidden rounded-md border border-neutral-200 bg-white shadow-sm">
+      <table class="min-w-full divide-y divide-neutral-200 text-sm">
+        <thead class="bg-neutral-50 text-left text-xs font-semibold uppercase tracking-wide text-neutral-500">
+          <tr>
+            <th class="px-4 py-3">Name</th>
+            <th class="px-4 py-3">Query</th>
+            <th class="px-4 py-3">Sort</th>
+            <th class="px-4 py-3">Sharing</th>
+            <th class="px-4 py-3 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-neutral-200">
+          <% @video_list_filters.each do |filter| %>
+            <tr>
+              <td class="px-4 py-3 font-medium text-neutral-950"><%= link_to filter.name, teacher_video_list_filter_path(filter), class: "hover:underline" %></td>
+              <td class="px-4 py-3 text-neutral-600"><%= filter.query.presence || "All videos" %></td>
+              <td class="px-4 py-3 text-neutral-600"><%= Teachers::VideoListFiltersController::SORT_OPTIONS.to_h.key(filter.sort_key) %></td>
+              <td class="px-4 py-3 text-neutral-600">
+                <% if filter.active_video_list_filter_share %>
+                  <%= link_to "Active", public_video_list_path(filter.active_video_list_filter_share.token), class: "font-medium text-green-700 hover:underline" %>
+                <% else %>
+                  <span class="text-neutral-500">Off</span>
+                <% end %>
+              </td>
+              <td class="px-4 py-3">
+                <div class="flex justify-end gap-2">
+                  <% if filter.active_video_list_filter_share %>
+                    <%= button_to "Unshare", teacher_video_list_filter_share_path(filter), method: :delete, class: "rounded-md border border-neutral-300 px-3 py-1.5 font-medium text-neutral-700 hover:bg-neutral-50" %>
+                  <% else %>
+                    <%= button_to "Share", teacher_video_list_filter_share_path(filter), method: :post, class: "rounded-md border border-neutral-300 px-3 py-1.5 font-medium text-neutral-700 hover:bg-neutral-50" %>
+                  <% end %>
+                  <%= link_to "Edit", edit_teacher_video_list_filter_path(filter), class: "rounded-md border border-neutral-300 px-3 py-1.5 font-medium text-neutral-700 hover:bg-neutral-50" %>
+                  <%= button_to "Delete", teacher_video_list_filter_path(filter), method: :delete, class: "rounded-md border border-red-200 px-3 py-1.5 font-medium text-red-700 hover:bg-red-50" %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="rounded-md border border-dashed border-neutral-300 bg-neutral-50 p-8 text-center">
+      <h2 class="text-lg font-semibold text-neutral-950">No list filters yet</h2>
+      <p class="mt-2 text-sm text-neutral-600">Create a saved browse view to share with students.</p>
+    </div>
+  <% end %>
+</section>

@@ -3,6 +3,8 @@ class Teacher < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :videos, dependent: :destroy
   has_many :video_shares, dependent: :destroy
+  has_many :video_list_filters, dependent: :destroy
+  has_many :video_list_filter_shares, dependent: :destroy
 
   normalizes :email_address, with: ->(email) { email.strip.downcase }
 end
