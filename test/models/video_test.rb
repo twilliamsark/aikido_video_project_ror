@@ -2,7 +2,7 @@ require "test_helper"
 
 class VideoTest < ActiveSupport::TestCase
   setup do
-    @teacher = Teacher.create!(email_address: "teacher@example.com", password: "password", password_confirmation: "password")
+    @teacher = create_teacher
   end
 
   test "derives YouTube video id from URL" do

@@ -5,7 +5,17 @@
       <h1 class="mt-2 text-3xl font-semibold text-neutral-950">Videos</h1>
     </div>
 
-    <%= link_to "New Video", new_teacher_video_path, class: "inline-flex items-center justify-center rounded-md bg-neutral-900 px-3.5 py-2.5 text-sm font-medium text-white hover:bg-neutral-700" %>
+    <div class="flex flex-col gap-3 sm:items-end">
+      <div class="flex gap-2">
+        <%= link_to "Export CSV", export_teacher_videos_path(format: :csv), class: "inline-flex items-center justify-center rounded-md border border-neutral-300 px-3.5 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50" %>
+        <%= link_to "New Video", new_teacher_video_path, class: "inline-flex items-center justify-center rounded-md bg-neutral-900 px-3.5 py-2.5 text-sm font-medium text-white hover:bg-neutral-700" %>
+      </div>
+
+      <%= form_with url: import_teacher_videos_path, multipart: true, class: "flex flex-col gap-2 sm:flex-row sm:items-center" do |form| %>
+        <%= form.file_field :file, accept: ".csv,text/csv", required: true, class: "block w-full text-sm text-neutral-700 file:mr-3 file:rounded-md file:border-0 file:bg-neutral-100 file:px-3 file:py-2 file:text-sm file:font-medium file:text-neutral-700 hover:file:bg-neutral-200" %>
+        <%= form.submit "Import CSV", class: "cursor-pointer rounded-md border border-neutral-300 px-3.5 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50" %>
+      <% end %>
+    </div>
   </div>
 
   <% if @videos.any? %>

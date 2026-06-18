@@ -16,6 +16,7 @@ The application should prioritize a simple, durable domain model, clean sharing 
 - Rails Action Text for rich text editing and rendering
 - Rails authentication or an equivalent minimal teacher authentication system
 - Minitest or RSpec, chosen before implementation and used consistently
+- CSV gem for bulk video import/export under Ruby 4
 - Docker dev container for local development
 
 ## 3. Product Decisions
@@ -28,6 +29,9 @@ The application should prioritize a simple, durable domain model, clean sharing 
 - Initial saved list filters support text query and sorting.
 - Students may sort shared list-filter results, but may not change the saved filter definition.
 - Hard delete is acceptable for the MVP. Dependent share records can be destroyed with the video.
+- Bulk CSV import and export are teacher-only capabilities. Students and guests cannot access CSV endpoints.
+- CSV import is additive and idempotent by YouTube video ID: existing videos keep their existing title and URL, and imported keywords are merged into the video keyword set.
+- CSV export uses the same `name,url,keywords` shape that import accepts, so exported files can be re-imported cleanly.
 
 ## 4. User Roles
 
@@ -60,6 +64,8 @@ Teachers are authenticated users. They can:
 - Create reusable list filters.
 - Add rich text descriptions to shared list filters.
 - Share or unshare list-filter URLs.
+- Import video entries in bulk from CSV.
+- Export the video library to CSV.
 
 ## 5. Domain Model
 
@@ -379,6 +385,11 @@ Suggested teacher routes:
 ```ruby
 namespace :teacher do
   resources :videos do
+    collection do
+      post :import
+      get :export
+    end
+
     resource :share, only: [:create, :destroy], controller: "video_shares"
   end
 
@@ -448,6 +459,8 @@ Use small service objects for behavior that would otherwise clutter controllers 
 - `Videos::KeywordAssigner`
 - `Videos::SearchTextBuilder`
 - `Videos::Query`
+- `Videos::CsvImporter`
+- `Videos::CsvExporter`
 - `VideoShares::Create`
 - `VideoShares::Deactivate`
 - `VideoListFilterShares::Create`
@@ -508,6 +521,31 @@ Recommended default:
 - Shared list filters are stable, teacher-defined views.
 - Students may sort within the shared filtered list.
 - Students may not mutate the saved filter.
+
+
+### Bulk CSV Import and Export
+
+Bulk CSV import and export are available only to authenticated teachers through teacher video collection routes. These endpoints are not part of the public student surface.
+
+Import rules:
+
+- The header row must contain `name` and `url` columns, matched case-insensitively.
+- `name` maps to `videos.title`.
+- `url` maps to `videos.youtube_url` and is parsed through `YoutubeVideoIdParser`.
+- Every other column is treated as a keyword source. Each cell is split on `;`, trimmed, squished, and empty values are dropped.
+- A CSV exported by the app in `name,url,keywords` format must round-trip through import.
+- Keywords are upserted case-insensitively through `Keyword.normalized_name`; existing canonical casing wins.
+- Rows with a missing `name` or an unparseable YouTube URL are skipped and reported.
+- Rows are matched by derived YouTube video ID. If a matching video already exists in the library or earlier in the same file, the existing video's keywords are replaced with the union of current and incoming keywords and the row is counted as merged. Existing title, URL, description, and creator attribution are left unchanged.
+- Import returns `{ created, merged, skipped, errors: [{ row, name, reason }] }`.
+
+Export rules:
+
+- Export columns are `name,url,keywords`.
+- `name` is the video title.
+- `url` is the original stored YouTube URL.
+- `keywords` is a `;`-joined alphabetical list of keyword display names.
+- Standard CSV quoting is used, including for commas, quotes, and newlines.
 
 ## 11. Rich Text Requirements
 
@@ -592,6 +630,8 @@ Shared list-filter page:
 Teacher video index:
 
 - Table or dense list of all videos in the dojo library.
+- Teacher-only CSV import control.
+- Teacher-only CSV export action.
 - Share status.
 - Actions for view, edit, delete, share, unshare.
 
@@ -766,6 +806,9 @@ Cover:
 - Guest can watch through an active shared video URL.
 - Inactive share URL returns 404.
 - Teacher can create, update, delete video.
+- Teacher can import videos from CSV.
+- Teacher can export videos to CSV.
+- Guest cannot access teacher CSV import or export endpoints.
 - Teacher can update and delete videos created by other teachers.
 - Teacher can share and unshare video.
 - Teacher can create, share, and unshare list filter.
@@ -799,6 +842,18 @@ Cover:
 - Add rich text video descriptions.
 - Add keyword model and assignment.
 - Add teacher video CRUD UI.
+
+### Milestone 2.5: Bulk Video Import and Export
+
+- Add teacher-only CSV import and export endpoints under the teacher video collection.
+- Import CSV files with required `name` and `url` headers, matched case-insensitively.
+- Treat all other columns as keyword sources, splitting cells on `;`, trimming whitespace, and dropping empty values.
+- Create new videos from `name` and `url`, deriving and validating the YouTube video ID.
+- Match existing rows by YouTube video ID and merge keywords additively while leaving existing video fields unchanged.
+- Upsert keywords case-insensitively while preserving existing canonical casing.
+- Report import results as `{ created, merged, skipped, errors: [{ row, name, reason }] }`.
+- Export `name,url,keywords`, with keywords alphabetized and joined by `;` using standard CSV quoting.
+- Cover importer, exporter, and teacher-only route access with tests.
 
 ### Milestone 3: Sharing
 

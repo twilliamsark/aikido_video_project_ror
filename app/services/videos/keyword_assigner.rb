@@ -25,7 +25,9 @@ module Videos
       attr_reader :video, :names
 
       def normalized_names
-        names.to_s.split(",").map { |name| name.strip.squish }.reject(&:blank?).uniq { |name| Keyword.normalize(name) }
+        raw_names = names.is_a?(String) ? names.split(",") : Array(names)
+
+        raw_names.map { |name| name.to_s.strip.squish }.reject(&:blank?).uniq { |name| Keyword.normalize(name) }
       end
   end
 end

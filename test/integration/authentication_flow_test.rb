@@ -2,11 +2,7 @@ require "test_helper"
 
 class AuthenticationFlowTest < ActionDispatch::IntegrationTest
   setup do
-    @teacher = Teacher.create!(
-      email_address: "teacher@example.com",
-      password: "password",
-      password_confirmation: "password"
-    )
+    @teacher = create_teacher
   end
 
   test "public root is available without authentication" do

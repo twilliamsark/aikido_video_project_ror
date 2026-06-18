@@ -28,7 +28,22 @@ Everywhere else the description will be plain text
 
 The data will be stored in a SQLite database.
 
-TODO: create a technical specification document which can be used as a foundation to then build this application.
+Bulk data import and export via CSV file.
+
+Import
+
+- The header row must contain name and url columns (case-insensitive).
+- name → video title; url → youtube_url (parsed/validated to a video ID).
+- Every other column is treated as keywords: each cell is split on ;, trimmed, and empty values dropped. This means a CSV in the export format (name,url,keywords) round-trips back in cleanly.
+- Keywords are upserted case-insensitively and deduped (existing canonical casing wins).
+- Rows with a missing name or an unparseable YouTube URL are skipped and reported.
+- Matched by YouTube video ID: when a row's video already exists (in the library or earlier in the same file), the existing video's keywords are replaced with the union of its current and incoming keywords (counted as merged); other fields are left unchanged. Re-importing is therefore safe and additive.
+- Response: { created, merged, skipped, errors: [{ row, name, reason }] }.
+
+Export
+
+- Columns: name,url,keywords where keywords are ;-joined (alphabetical).
+- Standard CSV quoting (fields with commas/quotes/newlines are quoted).
 
 Project decisions
 - This is a single-dojo application, not a multi-tenant platform.
@@ -39,3 +54,5 @@ Project decisions
 - Initial saved list filters support text query and sorting.
 - Students may sort shared list-filter results, but may not change the saved filter definition.
 - Hard delete is acceptable for the MVP. Dependent share records can be destroyed with the video.
+
+TODO: create a technical specification document which can be used as a foundation to then build this application.
