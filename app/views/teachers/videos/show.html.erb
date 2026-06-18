@@ -1,0 +1,43 @@
+<section class="space-y-6">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+      <p class="text-sm font-medium text-neutral-500">Teacher Area</p>
+      <h1 class="mt-2 text-3xl font-semibold text-neutral-950"><%= @video.title %></h1>
+      <p class="mt-2 text-sm text-neutral-600">Created by <%= @video.teacher.email_address %></p>
+    </div>
+
+    <div class="flex gap-2">
+      <%= link_to "Edit", edit_teacher_video_path(@video), class: "rounded-md border border-neutral-300 px-3.5 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50" %>
+      <%= link_to "All Videos", teacher_videos_path, class: "rounded-md bg-neutral-900 px-3.5 py-2.5 text-sm font-medium text-white hover:bg-neutral-700" %>
+    </div>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-[1fr_0.7fr]">
+    <div class="space-y-4">
+      <div class="aspect-video overflow-hidden rounded-md border border-neutral-200 bg-neutral-950">
+        <iframe class="h-full w-full" src="https://www.youtube-nocookie.com/embed/<%= @video.youtube_video_id %>" title="YouTube video player" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+
+      <div class="prose max-w-none">
+        <%= @video.description %>
+      </div>
+    </div>
+
+    <aside class="space-y-4 rounded-md border border-neutral-200 bg-neutral-50 p-5">
+      <div>
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-neutral-500">YouTube ID</h2>
+        <p class="mt-1 font-mono text-sm text-neutral-800"><%= @video.youtube_video_id %></p>
+      </div>
+
+      <div>
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-neutral-500">Original URL</h2>
+        <p class="mt-1 break-all text-sm text-neutral-800"><%= @video.youtube_url %></p>
+      </div>
+
+      <div>
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-neutral-500">Keywords</h2>
+        <p class="mt-1 text-sm text-neutral-800"><%= @video.keyword_names.presence || "None" %></p>
+      </div>
+    </aside>
+  </div>
+</section>

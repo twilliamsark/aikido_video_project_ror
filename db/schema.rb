@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_18_140549) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_18_140552) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -49,6 +49,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_140549) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "keywords", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.string "normalized_name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["normalized_name"], name: "index_keywords_on_normalized_name", unique: true
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -66,7 +74,33 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_140549) do
     t.index ["email_address"], name: "index_teachers_on_email_address", unique: true
   end
 
+  create_table "video_keywords", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "keyword_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "video_id", null: false
+    t.index ["keyword_id"], name: "index_video_keywords_on_keyword_id"
+    t.index ["video_id", "keyword_id"], name: "index_video_keywords_on_video_id_and_keyword_id", unique: true
+    t.index ["video_id"], name: "index_video_keywords_on_video_id"
+  end
+
+  create_table "videos", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description_plain_text"
+    t.text "search_text"
+    t.integer "teacher_id", null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.string "youtube_url", null: false
+    t.string "youtube_video_id", null: false
+    t.index ["teacher_id"], name: "index_videos_on_teacher_id"
+    t.index ["youtube_video_id"], name: "index_videos_on_youtube_video_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "sessions", "teachers"
+  add_foreign_key "video_keywords", "keywords"
+  add_foreign_key "video_keywords", "videos"
+  add_foreign_key "videos", "teachers"
 end

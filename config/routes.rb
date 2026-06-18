@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
   namespace :teachers, path: "teacher", as: "teacher" do
     root "dashboard#show"
+    resources :videos
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

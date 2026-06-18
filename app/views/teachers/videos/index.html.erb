@@ -1,0 +1,47 @@
+<section class="space-y-6">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <p class="text-sm font-medium text-neutral-500">Teacher Area</p>
+      <h1 class="mt-2 text-3xl font-semibold text-neutral-950">Videos</h1>
+    </div>
+
+    <%= link_to "New Video", new_teacher_video_path, class: "inline-flex items-center justify-center rounded-md bg-neutral-900 px-3.5 py-2.5 text-sm font-medium text-white hover:bg-neutral-700" %>
+  </div>
+
+  <% if @videos.any? %>
+    <div class="overflow-hidden rounded-md border border-neutral-200 bg-white shadow-sm">
+      <table class="min-w-full divide-y divide-neutral-200 text-sm">
+        <thead class="bg-neutral-50 text-left text-xs font-semibold uppercase tracking-wide text-neutral-500">
+          <tr>
+            <th class="px-4 py-3">Title</th>
+            <th class="px-4 py-3">Keywords</th>
+            <th class="px-4 py-3">Teacher</th>
+            <th class="px-4 py-3">Updated</th>
+            <th class="px-4 py-3 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-neutral-200">
+          <% @videos.each do |video| %>
+            <tr>
+              <td class="px-4 py-3 font-medium text-neutral-950"><%= link_to video.title, teacher_video_path(video), class: "hover:underline" %></td>
+              <td class="px-4 py-3 text-neutral-600"><%= video.keywords.map(&:name).join(", ").presence || "None" %></td>
+              <td class="px-4 py-3 text-neutral-600"><%= video.teacher.email_address %></td>
+              <td class="px-4 py-3 text-neutral-600"><%= time_ago_in_words(video.updated_at) %> ago</td>
+              <td class="px-4 py-3">
+                <div class="flex justify-end gap-2">
+                  <%= link_to "Edit", edit_teacher_video_path(video), class: "rounded-md border border-neutral-300 px-3 py-1.5 font-medium text-neutral-700 hover:bg-neutral-50" %>
+                  <%= button_to "Delete", teacher_video_path(video), method: :delete, class: "rounded-md border border-red-200 px-3 py-1.5 font-medium text-red-700 hover:bg-red-50" %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="rounded-md border border-dashed border-neutral-300 bg-neutral-50 p-8 text-center">
+      <h2 class="text-lg font-semibold text-neutral-950">No videos yet</h2>
+      <p class="mt-2 text-sm text-neutral-600">Create the first instructional video entry for the dojo library.</p>
+    </div>
+  <% end %>
+</section>
