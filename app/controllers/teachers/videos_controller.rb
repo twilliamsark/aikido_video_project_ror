@@ -4,7 +4,7 @@ module Teachers
     before_action :set_keyword_names, only: %i[ edit update ]
 
     def index
-      @videos = Video.includes(:teacher, :keywords).order(created_at: :desc)
+      @videos = Video.includes(:teacher, :keywords, :active_video_share).order(created_at: :desc)
     end
 
     def show

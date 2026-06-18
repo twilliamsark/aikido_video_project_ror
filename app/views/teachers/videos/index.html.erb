@@ -26,6 +26,7 @@
             <th class="px-4 py-3">Title</th>
             <th class="px-4 py-3">Keywords</th>
             <th class="px-4 py-3">Teacher</th>
+            <th class="px-4 py-3">Sharing</th>
             <th class="px-4 py-3">Updated</th>
             <th class="px-4 py-3 text-right">Actions</th>
           </tr>
@@ -36,9 +37,21 @@
               <td class="px-4 py-3 font-medium text-neutral-950"><%= link_to video.title, teacher_video_path(video), class: "hover:underline" %></td>
               <td class="px-4 py-3 text-neutral-600"><%= video.keywords.map(&:name).join(", ").presence || "None" %></td>
               <td class="px-4 py-3 text-neutral-600"><%= video.teacher.email_address %></td>
+              <td class="px-4 py-3 text-neutral-600">
+                <% if video.active_video_share %>
+                  <%= link_to "Active", public_video_share_path(video.active_video_share.token), class: "font-medium text-green-700 hover:underline" %>
+                <% else %>
+                  <span class="text-neutral-500">Off</span>
+                <% end %>
+              </td>
               <td class="px-4 py-3 text-neutral-600"><%= time_ago_in_words(video.updated_at) %> ago</td>
               <td class="px-4 py-3">
                 <div class="flex justify-end gap-2">
+                  <% if video.active_video_share %>
+                    <%= button_to "Unshare", teacher_video_share_path(video), method: :delete, class: "rounded-md border border-neutral-300 px-3 py-1.5 font-medium text-neutral-700 hover:bg-neutral-50" %>
+                  <% else %>
+                    <%= button_to "Share", teacher_video_share_path(video), method: :post, class: "rounded-md border border-neutral-300 px-3 py-1.5 font-medium text-neutral-700 hover:bg-neutral-50" %>
+                  <% end %>
                   <%= link_to "Edit", edit_teacher_video_path(video), class: "rounded-md border border-neutral-300 px-3 py-1.5 font-medium text-neutral-700 hover:bg-neutral-50" %>
                   <%= button_to "Delete", teacher_video_path(video), method: :delete, class: "rounded-md border border-red-200 px-3 py-1.5 font-medium text-red-700 hover:bg-red-50" %>
                 </div>

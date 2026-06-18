@@ -4,6 +4,8 @@ class Video < ApplicationRecord
   belongs_to :teacher
   has_many :video_keywords, dependent: :destroy
   has_many :keywords, through: :video_keywords
+  has_one :video_share, dependent: :destroy
+  has_one :active_video_share, -> { where(active: true) }, class_name: "VideoShare"
   has_rich_text :description
 
   before_validation :assign_youtube_video_id

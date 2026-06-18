@@ -2,6 +2,11 @@ Rails.application.routes.draw do
   resource :session, only: %i[ new create destroy ]
   resources :passwords, param: :token, only: %i[ new create edit update ]
 
+  scope module: :public do
+    resources :videos, only: :show
+    get "watch/:token", to: "video_shares#show", as: :public_video_share
+  end
+
   namespace :teachers, path: "teacher", as: "teacher" do
     root "dashboard#show"
     resources :videos do
@@ -9,6 +14,8 @@ Rails.application.routes.draw do
         post :import
         get :export
       end
+
+      resource :share, only: %i[ create destroy ], controller: "video_shares"
     end
   end
 
