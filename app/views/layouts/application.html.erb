@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Aikido Video Library" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Aikido Video Library">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%= stylesheet_link_tag "trix", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "actiontext", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="min-h-screen bg-white text-neutral-900">
+    <header class="border-b border-neutral-200 bg-white">
+      <nav class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
+        <%= link_to "Aikido Video Library", root_path, class: "text-sm font-semibold text-neutral-950" %>
+
+        <div class="flex items-center gap-3 text-sm">
+          <%= link_to "Browse", root_path, class: "text-neutral-600 hover:text-neutral-950" %>
+          <% if authenticated? %>
+            <%= link_to "Teacher Area", teacher_root_path, class: "text-neutral-600 hover:text-neutral-950" %>
+            <%= button_to "Sign out", session_path, method: :delete, class: "rounded-md bg-neutral-900 px-3 py-2 font-medium text-white hover:bg-neutral-700" %>
+          <% else %>
+            <%= link_to "Teacher Sign In", new_session_path, class: "rounded-md bg-neutral-900 px-3 py-2 font-medium text-white hover:bg-neutral-700" %>
+          <% end %>
+        </div>
+      </nav>
+    </header>
+
+    <main class="mx-auto w-full max-w-6xl px-5 py-8">
+      <% if alert = flash[:alert] %>
+        <p class="mb-5 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-600" id="alert"><%= alert %></p>
+      <% end %>
+
+      <% if notice = flash[:notice] %>
+        <p class="mb-5 rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm font-medium text-green-600" id="notice"><%= notice %></p>
+      <% end %>
+
+      <%= yield %>
+    </main>
+  </body>
+</html>

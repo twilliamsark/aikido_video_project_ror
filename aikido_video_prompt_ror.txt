@@ -1,0 +1,41 @@
+I'm building an "Aikido Video Library" web application.
+
+In this app, teachers will be able to create entries for a video and point those entries at a YouTube URL.  The teacher will be able to create a video description, created via a rich text editor.
+
+Students will have view only access to the video entries and will be able to play the entries via an embedded YouTube player.
+
+In detail, students are guest (unauthenticated) users who will be able to:
+- use a filterable and sortable list view to browse the video entries
+- the filter will consider any text in either the video title, keywords, or video description
+
+In detail, authenticated teachers will be able to:
+- create, view, update and delete video entries
+- video entries will have any number of keywords associated with them
+- share a video entry (via url) and also stop sharing
+-- this should be handled with a video sharing model with an active status
+- a teacher can create a pre-defined filter and share or unshare that url.
+-- this should be handled with a video sharing list filter model with an active status.  this model will also have a list description that the user can enter via a rich text editor
+
+I'll build the app using Ruby 4 and Rails 8.  For styling, we will use TailwindCSS.
+
+We will provide basic rich text formatting for the video description on a watch page.
+- Bold, Italic
+- 3 Heading Levels + Normal Text
+- Bullet point lists
+- Inline code and code snippets
+- Horizontal separator lines
+Everywhere else the description will be plain text
+
+The data will be stored in a SQLite database.
+
+From this effort please create for me a technical specification document which I can use as a foundation to then build this application.
+
+Project decisions
+- This is a single-dojo application, not a multi-tenant platform.
+- Authenticated teachers can see and manage videos created by any teacher.
+- All videos are visible on the public browse page, regardless of share status.
+- Video sharing controls a direct public share URL only; it does not control whether the video appears in public browse results.
+- Re-sharing a video or list filter should reuse its existing token when one exists.
+- Initial saved list filters support text query and sorting.
+- Students may sort shared list-filter results, but may not change the saved filter definition.
+- Hard delete is acceptable for the MVP. Dependent share records can be destroyed with the video.
