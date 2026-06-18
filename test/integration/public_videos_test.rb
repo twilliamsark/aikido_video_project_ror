@@ -61,12 +61,32 @@ class PublicVideosTest < ActionDispatch::IntegrationTest
     assert_no_match(/<h1>Falling safely<\/h1>/, response.body)
   end
 
+  test "public browse paginates videos" do
+    13.times do |index|
+      @teacher.videos.create!(title: "Extra #{index.to_s.rjust(2, '0')}", youtube_url: "https://youtu.be/x#{format('%010d', index)}")
+    end
+
+    get videos_path(sort: "title_asc")
+
+    assert_response :success
+    assert_select "article", 12
+    assert_select "nav[aria-label=?]", "Pagination"
+    assert_select "a", "Next"
+
+    get videos_path(sort: "title_asc", page: 2)
+
+    assert_response :success
+    assert_select "article", 3
+    assert_select "a", "Previous"
+  end
+
   test "guest can open a watch page from browse" do
     get video_path(@ikkyo)
 
     assert_response :success
     assert_select "h1", "Ikkyo Basics"
-    assert_select "iframe[src=?]", "https://www.youtube-nocookie.com/embed/ppppppppppp"
+    assert_select "iframe[src=?][title=?][loading=?][referrerpolicy=?]", "https://www.youtube-nocookie.com/embed/ppppppppppp", "Ikkyo Basics video player", "lazy", "strict-origin-when-cross-origin"
+    assert_select "iframe[allow=?]", "encrypted-media; picture-in-picture; web-share"
     assert_select ".prose", text: /Blend and enter/
   end
 end

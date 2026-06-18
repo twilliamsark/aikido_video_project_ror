@@ -57,6 +57,15 @@ class TeacherVideosTest < ActionDispatch::IntegrationTest
     assert_redirected_to teacher_videos_path
   end
 
+  test "deleting a video destroys its share record" do
+    video = @teacher.videos.create!(title: "Delete Share", youtube_url: "https://youtu.be/zzzzzzzzzzz")
+    VideoShares::Create.call(video:, teacher: @teacher)
+    sign_in_as(@teacher)
+
+    assert_difference -> { VideoShare.count }, -1 do
+      delete teacher_video_path(video)
+    end
+  end
 
   test "teacher can import videos from csv as json" do
     sign_in_as(@teacher)

@@ -15,7 +15,7 @@
   <div class="grid gap-6 lg:grid-cols-[1fr_0.7fr]">
     <div class="space-y-4">
       <div class="aspect-video overflow-hidden rounded-md border border-neutral-200 bg-neutral-950">
-        <iframe class="h-full w-full" src="https://www.youtube-nocookie.com/embed/<%= @video.youtube_video_id %>" title="YouTube video player" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        <iframe class="h-full w-full" src="https://www.youtube-nocookie.com/embed/<%= @video.youtube_video_id %>" title="<%= @video.title %> video player" allow="encrypted-media; picture-in-picture; web-share" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
       </div>
 
       <div class="prose max-w-none">

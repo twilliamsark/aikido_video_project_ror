@@ -61,6 +61,16 @@ class VideoListFiltersTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test "deleting a list filter destroys its share record" do
+    filter = @teacher.video_list_filters.create!(name: "Basics", query: "basics", sort_key: "title_asc")
+    VideoListFilterShares::Create.call(video_list_filter: filter, teacher: @teacher)
+    sign_in_as(@teacher)
+
+    assert_difference -> { VideoListFilterShare.count }, -1 do
+      delete teacher_video_list_filter_path(filter)
+    end
+  end
+
   test "teacher can share unshare and reshare an owned list filter with the same token" do
     filter = @teacher.video_list_filters.create!(name: "Basics", query: "basics", sort_key: "title_asc")
     sign_in_as(@teacher)

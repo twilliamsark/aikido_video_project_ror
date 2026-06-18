@@ -1,0 +1,19 @@
+<% if pagination.total_pages > 1 %>
+  <nav class="flex flex-col gap-3 border-t border-neutral-200 pt-4 text-sm sm:flex-row sm:items-center sm:justify-between" aria-label="Pagination">
+    <p class="text-neutral-600">Page <%= pagination.page %> of <%= pagination.total_pages %></p>
+
+    <div class="flex gap-2">
+      <% if pagination.previous_page %>
+        <%= link_to "Previous", url_for(request.query_parameters.merge(page: pagination.previous_page)), class: "rounded-md border border-neutral-300 px-3.5 py-2 font-medium text-neutral-700 hover:bg-neutral-50" %>
+      <% else %>
+        <span class="rounded-md border border-neutral-200 px-3.5 py-2 font-medium text-neutral-500">Previous</span>
+      <% end %>
+
+      <% if pagination.next_page %>
+        <%= link_to "Next", url_for(request.query_parameters.merge(page: pagination.next_page)), class: "rounded-md border border-neutral-300 px-3.5 py-2 font-medium text-neutral-700 hover:bg-neutral-50" %>
+      <% else %>
+        <span class="rounded-md border border-neutral-200 px-3.5 py-2 font-medium text-neutral-500">Next</span>
+      <% end %>
+    </div>
+  </nav>
+<% end %>

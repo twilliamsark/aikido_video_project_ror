@@ -14,6 +14,7 @@
         <%= form.select :sort, options_for_select(@sort_options, @sort), {}, class: "mt-2 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm shadow-sm focus:outline-solid focus:outline-blue-600" %>
       </div>
 
+      <%= form.hidden_field :page, value: 1 %>
       <%= form.submit "Apply", class: "cursor-pointer rounded-md bg-neutral-900 px-3.5 py-2.5 text-sm font-medium text-white hover:bg-neutral-700" %>
     <% end %>
   </div>
@@ -45,6 +46,8 @@
         </article>
       <% end %>
     </div>
+
+    <%= render "public/videos/pagination", pagination: @pagination %>
   <% else %>
     <div class="rounded-md border border-dashed border-neutral-300 bg-neutral-50 p-8 text-center">
       <h2 class="text-lg font-semibold text-neutral-950">No videos found</h2>

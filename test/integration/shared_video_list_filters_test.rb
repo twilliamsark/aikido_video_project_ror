@@ -53,6 +53,26 @@ class SharedVideoListFiltersTest < ActionDispatch::IntegrationTest
     assert_select "h2", /Weapons Basics/
   end
 
+  test "shared list paginates matching videos" do
+    12.times do |index|
+      video = @teacher.videos.create!(title: "Basics Extra #{index.to_s.rjust(2, '0')}", youtube_url: "https://youtu.be/y#{format('%010d', index)}")
+      Videos::KeywordAssigner.call(video:, names: "Basics")
+    end
+
+    get public_video_list_path(@share.token)
+
+    assert_response :success
+    assert_select "article", 12
+    assert_select "nav[aria-label=?]", "Pagination"
+    assert_select "a", "Next"
+
+    get public_video_list_path(@share.token), params: { page: 2 }
+
+    assert_response :success
+    assert_select "article", 2
+    assert_select "a", "Previous"
+  end
+
   test "inactive and unknown shared list URLs return not found" do
     VideoListFilterShares::Deactivate.call(video_list_filter: @filter)
 

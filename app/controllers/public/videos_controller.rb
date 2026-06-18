@@ -14,7 +14,9 @@ module Public
       @query = params[:q].to_s.strip.squish
       @sort = params[:sort].presence || Videos::Query::DEFAULT_SORT
       @sort_options = SORT_OPTIONS
-      @videos = Videos::Query.call(scope: Video.includes(:keywords), query: @query, sort: @sort)
+      matching_videos = Videos::Query.call(scope: Video.includes(:keywords), query: @query, sort: @sort)
+      @pagination = Videos::Pagination.call(relation: matching_videos, page: params[:page])
+      @videos = @pagination.records
     end
 
     def show
