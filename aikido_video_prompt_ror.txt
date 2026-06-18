@@ -28,7 +28,7 @@ Everywhere else the description will be plain text
 
 The data will be stored in a SQLite database.
 
-From this effort please create for me a technical specification document which I can use as a foundation to then build this application.
+TODO: create a technical specification document which can be used as a foundation to then build this application.
 
 Project decisions
 - This is a single-dojo application, not a multi-tenant platform.
