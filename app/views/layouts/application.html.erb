@@ -30,7 +30,7 @@
         <%= link_to "Aikido Video Library", root_path, class: "text-sm font-semibold text-neutral-950" %>
 
         <div class="flex items-center gap-3 text-sm">
-          <%= link_to "Browse", root_path, class: "text-neutral-600 hover:text-neutral-950" %>
+          <%= link_to "Browse", videos_path, class: "text-neutral-600 hover:text-neutral-950" %>
           <% if authenticated? %>
             <%= link_to "Teacher Area", teacher_root_path, class: "text-neutral-600 hover:text-neutral-950" %>
             <%= button_to "Sign out", session_path, method: :delete, class: "rounded-md bg-neutral-900 px-3 py-2 font-medium text-white hover:bg-neutral-700" %>

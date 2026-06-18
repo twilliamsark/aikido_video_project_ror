@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   resources :passwords, param: :token, only: %i[ new create edit update ]
 
   scope module: :public do
-    resources :videos, only: :show
+    resources :videos, only: %i[ index show ]
     get "watch/:token", to: "video_shares#show", as: :public_video_share
   end
 
@@ -28,5 +28,5 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  root "home#index"
+  root "public/videos#index"
 end

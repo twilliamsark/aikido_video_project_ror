@@ -9,7 +9,7 @@ class AuthenticationFlowTest < ActionDispatch::IntegrationTest
     get root_path
 
     assert_response :success
-    assert_select "h1", "Aikido Video Library"
+    assert_select "h1", "Browse Videos"
   end
 
   test "teacher area requires authentication" do

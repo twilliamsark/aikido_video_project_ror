@@ -18,3 +18,4 @@
 /vendor/bundle
 /config/master.key
 .DS_Store
+tmp/pids/server.pid
